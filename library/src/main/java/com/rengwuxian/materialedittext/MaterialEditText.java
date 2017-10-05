@@ -2,10 +2,12 @@ package com.rengwuxian.materialedittext;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +22,8 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleableRes;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.Layout;
@@ -397,9 +401,19 @@ public class MaterialEditText extends AppCompatEditText {
       accentTypeface = getCustomTypeface(fontPathForAccent);
       textPaint.setTypeface(accentTypeface);
     }
+    Typeface accentTypeFaceFromAttr = getFont(R.styleable.MaterialEditText_met_accentFontFamily, typedArray);
+    if (accentTypeFaceFromAttr != null) {
+      accentTypeface = accentTypeFaceFromAttr;
+      textPaint.setTypeface(accentTypeface);
+    }
     String fontPathForView = typedArray.getString(R.styleable.MaterialEditText_met_typeface);
     if (fontPathForView != null && !isInEditMode()) {
       typeface = getCustomTypeface(fontPathForView);
+      setTypeface(typeface);
+    }
+    Typeface typeFaceFromAttr = getFontForTextView(R.styleable.MaterialEditText_met_fontFamily, typedArray);
+    if (typeFaceFromAttr != null) {
+      typeface = typeFaceFromAttr;
       setTypeface(typeface);
     }
     floatingLabelText = typedArray.getString(R.styleable.MaterialEditText_met_floatingLabelText);
@@ -498,6 +512,47 @@ public class MaterialEditText extends AppCompatEditText {
 
   private Typeface getCustomTypeface(@NonNull String fontPath) {
     return TypefaceCache.get(fontPath, getContext().getAssets());
+  }
+
+  private Typeface getFont(@StyleableRes int attributeId, TypedArray typedArray) {
+    int resourceId = typedArray.getResourceId(attributeId, 0);
+
+    if (resourceId == 0) {
+      return null;
+    }
+
+    try {
+      return ResourcesCompat.getFont(getContext(), resourceId);
+    } catch (Resources.NotFoundException exception) {
+
+    } catch (UnsupportedOperationException exception) {
+
+    }
+
+    String fontFamilyName = typedArray.getString(attributeId);
+    return Typeface.create(fontFamilyName, Typeface.NORMAL);
+  }
+
+  @SuppressLint("RestrictedApi")
+  private Typeface getFontForTextView(@StyleableRes int attributeId, TypedArray typedArray) {
+    int resourceId = typedArray.getResourceId(attributeId, 0);
+
+    if (resourceId == 0) {
+      return null;
+    }
+
+    TypedValue typedValue = new TypedValue();
+
+    try {
+      return ResourcesCompat.getFont(getContext(), resourceId, typedValue, Typeface.NORMAL, this);
+    } catch (Resources.NotFoundException exception) {
+
+    } catch (UnsupportedOperationException exception) {
+
+    }
+
+    String fontFamilyName = typedArray.getString(attributeId);
+    return Typeface.create(fontFamilyName, Typeface.NORMAL);
   }
 
   public void setIconLeft(@DrawableRes int res) {
