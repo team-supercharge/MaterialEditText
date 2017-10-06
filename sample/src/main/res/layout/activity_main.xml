@@ -439,5 +439,23 @@
           app:met_disabledBottomLineDotted="false"/>
 
     </LinearLayout>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/coming_soon"
+        android:hint="Custom font"
+        android:text="Custom font from Andoid 8 font support"
+        app:met_fontFamily="@font/coming_soon"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_floatingLabel="normal"
+        app:met_helperText="Helper Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Custom accent font"
+        android:text="Custom accent font from Andoid 8 font support"
+        app:met_accentFontFamily="@font/coming_soon"/>
+
   </LinearLayout>
 </ScrollView>
